@@ -12,6 +12,7 @@ const float A[] = {14.588185, 121.021542};
 const float B[] = {14.589435, 121.022893};
 const float C[] = {14.590562, 121.024286};
 const float D[] = {14.591606, 121.025618};
+int indexDistanceMin;
 int loopCounter;
 float minDist[100];
 int minLbl[100];
@@ -36,13 +37,18 @@ void loop() {
   Serial.println(tempLat, 6);
   Serial.print("Longtitude = ");
   Serial.println(tempLong, 6);
-  tempInd, tempMin = getDistance(tempLat, tempLong);
-  if(arrCnt>=99){
-    for(loopCounter = 0; loopCounter <30; loopCounter++){
-       minDist[loopCounter] = minDist[loopCounter + 70];
-       minLbl[loopCounter] = minLbl[loopCounter + 70];
+  tempMin = getDistance(tempLat, tempLong);
+  tempInd = indexDistanceMin;
+//  Serial.print("tempInd :");
+//  Serial.println(tempInd);
+//  Serial.print("tempMin :");
+//  Serial.println(tempMin);
+  if(arrCnt>=999){
+    for(loopCounter = 0; loopCounter <300; loopCounter++){
+       minDist[loopCounter] = minDist[loopCounter + 700];
+       minLbl[loopCounter] = minLbl[loopCounter + 700];
     }
-    arrCnt = 30;
+    arrCnt = 300;
   }
   minDist[arrCnt] = tempMin;
   minLbl[arrCnt] = tempInd;
@@ -63,21 +69,31 @@ void loop() {
       break;
   }
   arrCnt ++;
-  delay(500);
+  delay(5000);
 }
 float getDistance(float tempLat, float tempLong){
   float calDistance[] = {0.0, 0.0, 0.0, 0.0};
-  calDistance[0] = sqrt((pow((tempLat-A[0]), 2)) + (pow((tempLong-A[1]), 2)));
-  calDistance[1] = sqrt((pow((tempLat-B[0]), 2)) + (pow((tempLong-B[1]), 2)));
-  calDistance[2] = sqrt((pow((tempLat-C[0]), 2)) + (pow((tempLong-C[1]), 2)));
-  calDistance[3] = sqrt((pow((tempLat-D[0]), 2)) + (pow((tempLong-D[1]), 2)));
+  calDistance[0] = sqrt((pow((tempLat-A[0]), 2)) + (pow((tempLong-A[1]), 2))) * 1000;
+  calDistance[1] = sqrt((pow((tempLat-B[0]), 2)) + (pow((tempLong-B[1]), 2))) * 1000;
+  calDistance[2] = sqrt((pow((tempLat-C[0]), 2)) + (pow((tempLong-C[1]), 2))) * 1000;
+  calDistance[3] = sqrt((pow((tempLat-D[0]), 2)) + (pow((tempLong-D[1]), 2))) * 1000;
   int minDistanceIndex = 0;
-  for(loopCounter = 1; loopCounter<4; loopCounter++){
-    if(calDistance[loopCounter] < calDistance[minDistanceIndex]){
-      minDistanceIndex = loopCounter;
+  for(loopCounter = 0; loopCounter<4; loopCounter++){
+    Serial.print("Distance: ");
+    Serial.println(calDistance[loopCounter]);
+    if(loopCounter!=0){
+      if(calDistance[loopCounter] < calDistance[minDistanceIndex]){
+        minDistanceIndex = loopCounter;
+      }  
     }
   }
-  return(minDistanceIndex, calDistance[minDistanceIndex]);
+  indexDistanceMin = minDistanceIndex;
+//  int returnInt = minDistanceIndex;
+//  Serial.print("Return Value: ");
+//  Serial.println(returnInt);
+//  Serial.print("Minimal Distance: ");
+//  Serial.println(minDistanceIndex);
+  return(calDistance[minDistanceIndex]);
 }
 
 int getRoute(int index){
